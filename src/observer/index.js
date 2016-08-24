@@ -7,7 +7,7 @@ import {
   hasProto,
   hasOwn
 } from '../util/index'
-
+//获取arrayMethods中所有自己的方法
 const arrayKeys = Object.getOwnPropertyNames(arrayMethods)
 
 /**
@@ -36,11 +36,14 @@ export function withoutConversion (fn) {
  * @param {Array|Object} value
  * @constructor
  */
-
+//观察者构造函数,参数为观察的对象
 export function Observer (value) {
   this.value = value
   this.dep = new Dep()
+  //给value对象定义一个__obj__属性,并将该属性指向this,即该观察者对象
   def(value, '__ob__', this)
+
+  //如果是value对象是一个数组
   if (isArray(value)) {
     var augment = hasProto
       ? protoAugment
@@ -126,7 +129,7 @@ Observer.prototype.removeVm = function (vm) {
  * @param {Object|Array} target
  * @param {Object} src
  */
-
+//将target的原型指向src
 function protoAugment (target, src) {
   /* eslint-disable no-proto */
   target.__proto__ = src
@@ -140,7 +143,7 @@ function protoAugment (target, src) {
  * @param {Object|Array} target
  * @param {Object} proto
  */
-
+//将src中指定的keys列表拷贝到target对象上面来
 function copyAugment (target, src, keys) {
   for (var i = 0, l = keys.length; i < l; i++) {
     var key = keys[i]
@@ -164,6 +167,7 @@ export function observe (value, vm) {
     return
   }
   var ob
+  //如果对象value已经有了属性__ob__,并且该属性值是Observer的实例,则说明该value对象已经被观察了
   if (
     hasOwn(value, '__ob__') &&
     value.__ob__ instanceof Observer
@@ -177,9 +181,11 @@ export function observe (value, vm) {
   ) {
     ob = new Observer(value)
   }
+  //如果ob存在,并且vm不为空,则ob对象将vm对象加入观察
   if (ob && vm) {
     ob.addVm(vm)
   }
+  //返回该观察对象
   return ob
 }
 

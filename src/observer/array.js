@@ -1,12 +1,14 @@
 import { def, indexOf } from '../util/index'
 
+//获取Array的原型属性对象
 const arrayProto = Array.prototype
+//定义一个arrMethods对象,该对象的原型就是Array.prototype对象,即arrMethods对象继承了Array.prototype的所有方法
 export const arrayMethods = Object.create(arrayProto)
 
 /**
  * Intercept mutating methods and emit events
  */
-
+//这里给arrMethods对象重新定义了以下方法
 ;[
   'push',
   'pop',
@@ -17,16 +19,20 @@ export const arrayMethods = Object.create(arrayProto)
   'reverse'
 ]
 .forEach(function (method) {
-  // cache original method
+  // cache original method 缓存arrayProto上的方法
   var original = arrayProto[method]
+
+  //重新定义arrayMethods上的方法, 其value是一个mutator函数
   def(arrayMethods, method, function mutator () {
     // avoid leaking arguments:
     // http://jsperf.com/closure-with-arguments
+    //将arguments的值都拷贝到args数组中
     var i = arguments.length
     var args = new Array(i)
     while (i--) {
       args[i] = arguments[i]
     }
+
     var result = original.apply(this, args)
     var ob = this.__ob__
     var inserted

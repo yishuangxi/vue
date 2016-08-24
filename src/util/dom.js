@@ -10,7 +10,12 @@ import { removeWithTransition } from '../transition/index'
  * @param {String|Element} el
  * @return {Element}
  */
-
+/****
+ * 如果el不是字符串,那么就一定要是一个element了,否则会出错
+ * 这里这样设计,难道就不怕用户乱传el吗?
+ * @param el
+ * @returns {*}
+ */
 export function query (el) {
   if (typeof el === 'string') {
     var selector = el

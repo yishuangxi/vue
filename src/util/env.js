@@ -1,6 +1,7 @@
 /* global MutationObserver */
 
 // can we use __proto__?
+//浏览器环境的检测, chrome浏览器提供了__proto__属性直接访问对象的原型
 export const hasProto = '__proto__' in {}
 
 // Browser environment sniffing

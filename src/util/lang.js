@@ -97,7 +97,7 @@ export function isLiteral (exp) {
  * @param {String} str
  * @return {Boolean}
  */
-
+//以$和_开头的字符串,都是vue保留字段命名格式
 export function isReserved (str) {
   var c = (str + '').charCodeAt(0)
   return c === 0x24 || c === 0x5F

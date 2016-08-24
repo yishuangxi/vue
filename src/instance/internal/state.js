@@ -57,6 +57,7 @@ export default function (Vue) {
     var options = this.$options
     var el = options.el
     var props = options.props
+    //如果没有传入el,则告警
     if (props && !el) {
       process.env.NODE_ENV !== 'production' && warn(
         'Props will not be compiled if no `el` option is ' +
@@ -65,7 +66,9 @@ export default function (Vue) {
       )
     }
     // make sure to convert string selectors into element now
+    //根据配置,获取el对象, 并且把el和options.el都指向该对象
     el = options.el = query(el)
+    //如果el存在,并且el是元素, 并且props不为空的情况下,执行编译并且连接属性, 并赋值给属性_propsUnlinkFn, 否则赋值null
     this._propsUnlinkFn = el && el.nodeType === 1 && props
       // props must be linked in proper scope if inside v-for
       ? compileAndLinkProps(this, el, props, this._scope)
@@ -78,7 +81,9 @@ export default function (Vue) {
 
   Vue.prototype._initData = function () {
     var dataFn = this.$options.data
+    //这里说明,this.$options.data必须为函数
     var data = this._data = dataFn ? dataFn() : {}
+    //如果data不是普通对象,则重置data为空对象,并告警
     if (!isPlainObject(data)) {
       data = {}
       process.env.NODE_ENV !== 'production' && warn(
@@ -91,12 +96,14 @@ export default function (Vue) {
     var keys = Object.keys(data)
     var i, key
     i = keys.length
+    //遍历data中所有的key值, 并对这些key值的存取操作都代理到this._data的操作上来
     while (i--) {
       key = keys[i]
       // there are two scenarios where we can proxy a data key:
       // 1. it's not already defined as a prop
       // 2. it's provided via a instantiation option AND there are no
       //    template prop present
+      //这里其实是为了防止props中的key值,和data中的key值发生冲突, 发生冲突,则告警key已经存在与props中了!
       if (!props || !hasOwn(props, key)) {
         this._proxy(key)
       } else if (process.env.NODE_ENV !== 'production') {
@@ -155,7 +162,8 @@ export default function (Vue) {
    *
    * @param {String} key
    */
-
+  //代理该key: 其实就是对key的任何赋值操作,其实都是对self._data的赋值, 对key的任何取值操作,都是对self._data的读取操作
+  //等于是对key的所有操作,都代理到了self._data对象上面来了
   Vue.prototype._proxy = function (key) {
     if (!isReserved(key)) {
       // need to store ref to self here
